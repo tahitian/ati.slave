@@ -1,0 +1,10 @@
+#!/usr/bin/env expect
+
+set ip [lindex $argv 0]
+
+set timeout -1
+spawn scp -P 37022 /var/www/ati/slave/sync_slave.exp root@$ip:/var/www/ati/slave
+expect {
+    "*password:" { send "a82x97ruden\r" }
+}
+expect eof

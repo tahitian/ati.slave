@@ -1,0 +1,15 @@
+#!/usr/bin/env expect
+
+set ip [lindex $argv 0]
+
+set timeout -1
+spawn ssh -p 37022 root@$ip
+expect {
+    "yes/no" { send "yes\r";exp_continue }
+    "password:" { send "a82x97ruden\r" }
+}
+expect "*#"
+send "mkdir -p /var/www/ati/slave/runtime/cookies\r"
+expect "*#"
+send "exit\r"
+expect eof

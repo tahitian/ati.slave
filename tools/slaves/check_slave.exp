@@ -1,0 +1,17 @@
+#!/usr/bin/env expect
+
+set ip [lindex $argv 0]
+
+set timeout -1
+spawn ssh -p 37022 root@$ip
+expect {
+    "yes/no" { send "yes\r";exp_continue }
+    "password:" { send "a82x97ruden\r" }
+}
+expect "*#"
+send "pgrep -f \"python /var/www/ati/slave/new_slave.py\"\r"
+expect "*#"
+send "tail -n 1 /var/log/ati/new_slave.log\n"
+expect "*#"
+send "exit\r"
+expect eof

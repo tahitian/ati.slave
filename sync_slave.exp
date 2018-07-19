@@ -1,0 +1,7 @@
+#!/usr/bin/env expect
+
+set timeout -1
+spawn rsync -avH --progress "-e ssh -p 37022"  root@172.16.26.113::slave /var/www/ati/slave --exclude-from=/etc/rsync.excluded
+expect "password:"
+send "a82x97ruden\r"
+expect eof
