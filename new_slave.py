@@ -53,26 +53,26 @@ def run_routine_in_thread(routine):
     thread.start()
     return thread
 
-# def track_task(taskinfo):
-#     api_url = "http://172.16.26.112:37000/api/track/slave/%s" % str(taskinfo)
-#     code, html = curl_methods.curl_get(api_url)
-#     return (code == 200)
+def track_task(taskinfo):
+    api_url = "http://172.16.26.112:37000/api/track/slave/%s" % str(taskinfo)
+    code, html = curl_methods.curl_get(api_url)
+    return (code == 200)
 
-# def track_task_by_unit_id(unit_id, imp, clk):
-#     url = 'http://172.16.47.210:80/track/detail'
-#     post_data = {
-#         'client_id': 'test',
-#         'unit_id': unit_id,
-#         'detail': {
-#             'imp': imp,
-#             'clk': clk
-#         }
-#     }
-#     data = json.dumps(post_data)
-#     options = {}
-#     options[pycurl.POSTFIELDS] = data
-#     options[pycurl.HTTPHEADER] = ['Content-Type: application/json']
-#     code, html = curl_methods.curl_get(url, options)
+def track_task_by_unit_id(unit_id, imp, clk):
+    url = 'http://172.16.47.210:80/track/detail'
+    post_data = {
+        'client_id': 'test',
+        'unit_id': unit_id,
+        'detail': {
+            'imp': imp,
+            'clk': clk
+        }
+    }
+    data = json.dumps(post_data)
+    options = {}
+    options[pycurl.POSTFIELDS] = data
+    options[pycurl.HTTPHEADER] = ['Content-Type: application/json']
+    code, html = curl_methods.curl_get(url, options)
 
 class task_manager:
     uuid = get_system_uuid()
@@ -93,26 +93,13 @@ class task_manager:
             # fresh message
             if not message:
                 #to do@jiangtu api_url
-                # api_url = "http://172.16.47.210:80/get_task/bidding?client_id=test&task_type=0"
-                # code, html = curl_methods.curl_get(api_url)
-                # if code == 200:
-                #     try:
-                #         message = json.loads(html.strip())["task"]
-                #     except Exception, e:
-                #         console.log.warning("%r %r" % (e, html))
-                message = {
-                    "task_id":"test.20180716.pc",
-                    "imp":"http://www.baidu.com",
-                    "clk":"",
-                    "ua":"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729)",
-                    "landing":{
-                        "url":""
-                    },
-                    "headers":{
-                        "referrer":""
-                    },
-                    "unit_id":"test.20180716.pc_2RxjXtAEYz4d9L9R9628"
-                }
+                api_url = "http://172.16.47.210:80/get_task/bidding?client_id=test&task_type=0"
+                code, html = curl_methods.curl_get(api_url)
+                if code == 200:
+                    try:
+                        message = json.loads(html.strip())["task"]
+                    except Exception, e:
+                        console.log.warning("%r %r" % (e, html))
             if not message:
                 break
             self.tasks.append(message)
@@ -170,11 +157,11 @@ class task_manager:
             state = "fail"
             pass
         taskinfo = "name=%s&imp=%d&clk=%d&slave=%s&state=%s" % (str(task["task_id"]), 1 if str(task["imp"]) else 0, 1 if str(task["clk"]) else 0, self.uuid, state)
-        # track_task(taskinfo)
+        track_task(taskinfo)
         if state == "pass":
             imp_status = 1
             clk_status = 1 if clk else 0
-            # track_task_by_unit_id(task["unit_id"], imp_status, clk_status)
+            track_task_by_unit_id(task["unit_id"], imp_status, clk_status)
         current_thread = threading.current_thread()
         if current_thread in self.threads:
             self.threads.remove(current_thread)
@@ -183,18 +170,14 @@ class task_manager:
         pass
 
 def get_pptp_route_targets():
-    # targets = None
-    # api_url = "http://172.16.26.112:37000/api/pptp/route_targets"
-    # code, html = curl_methods.curl_get(api_url)
-    # if code == 200:
-    #     try:
-    #         targets = json.loads(html.strip())
-    #     except Exception, e:
-    #         console.log.warning("%r" % e)
-    targets = [{
-        'type': 'address',
-        'value': 'www.baidu.com'
-    }]
+    targets = None
+    api_url = "http://172.16.26.112:37000/api/pptp/route_targets"
+    code, html = curl_methods.curl_get(api_url)
+    if code == 200:
+        try:
+            targets = json.loads(html.strip())
+        except Exception, e:
+            console.log.warning("%r" % e)
     return targets
 
 def resolve_domain(domain):
@@ -205,20 +188,20 @@ def resolve_domain(domain):
         address = output.strip()
     return address
 
-# def get_pptp_account(key, uuid):
-#     account = {}
-#     api_url = "http://172.16.26.112:37000/api/pptp/account/%s/%s" % (key, uuid)
-#     code, html = curl_methods.curl_get(api_url)
-#     if code == 200:
-#         try:
-#             account = json.loads(html.strip())
-#         except Exception, e:
-#             console.log.warning("%r" % e)
-#     return account
+def get_pptp_account(key, uuid):
+    account = {}
+    api_url = "http://172.16.26.112:37000/api/pptp/account/%s/%s" % (key, uuid)
+    code, html = curl_methods.curl_get(api_url)
+    if code == 200:
+        try:
+            account = json.loads(html.strip())
+        except Exception, e:
+            console.log.warning("%r" % e)
+    return account
 
-# def track_pptp(pptpinfo):
-#     api_url = "http://172.16.26.112:37000/api/pptp/track/%s" % str(pptpinfo)
-#     code, html = curl_methods.curl_get(api_url)
+def track_pptp(pptpinfo):
+    api_url = "http://172.16.26.112:37000/api/pptp/track/%s" % str(pptpinfo)
+    code, html = curl_methods.curl_get(api_url)
 
 class pptp_manager():
     uuid = get_system_uuid()
@@ -251,13 +234,7 @@ class pptp_manager():
 
     def update_pptp_account(self):
         done = False
-        # account = get_pptp_account(self.key, self.uuid)
-        account = {
-            'server': 'hh1.ipduoduo.cc',
-            'mppe': None,
-            'username': 'gm44',
-            'password': '6688'
-        }
+        account = get_pptp_account(self.key, self.uuid)
         if cmp(self.account, account):
             self.account = account
         if self.account:
@@ -280,7 +257,7 @@ class pptp_manager():
         pptp_finish_ts = time.time()
         pptp_duration = int(pptp_finish_ts - pptp_begin_ts)
         pptpinfo = "server=%s&username=%s&state=%s&duration=%d" % (str(self.account["server"]), str(self.account["username"]), "ok" if ok else "error", pptp_duration)
-        # track_pptp(pptpinfo)
+        track_pptp(pptpinfo)
         return ok
 
     def stop_pptp_link(self):
@@ -330,7 +307,7 @@ def start():
     global g_stop_loop
     console.log.info("application started...");
     # tasks
-    capacity = 1
+    capacity = 70
     tm = task_manager(capacity)
     thread_gap = wait(1, 8)
     task_gap = wait(1, 8)
